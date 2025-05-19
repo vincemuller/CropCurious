@@ -11,7 +11,7 @@ import SwiftUI
 struct CropCuriousApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MapSearchView()
         }
     }
 }

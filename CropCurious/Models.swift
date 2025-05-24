@@ -6,21 +6,21 @@
 //
 
 import Foundation
+import MapKit
 
 
 struct Field: Identifiable {
     var id = UUID()
     var acreSize: Double
-    var farm: [Farm]
+    var farm: Farm
     var crops: [Crop]
-    var fieldBoundary: [String]
+    var fieldBoundary: [CLLocationCoordinate2D]
 }
 
 struct Farm: Identifiable {
     var id = UUID()
     var name: String
     var location: String
-    var fields: [Field]
 }
 
 struct Crop: Identifiable {

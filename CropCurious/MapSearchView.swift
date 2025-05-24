@@ -8,6 +8,16 @@
 import SwiftUI
 import MapKit
 
+struct SampleFields {
+    static let data: [Field] = [
+        Field(acreSize: 10, farm: Farm(name: "Clarkson Farm", location: "Buckeye, Arizona"), crops: [Crop(name: "Corn", datePlanted: Date.now, estimatedHarvestDate: Date.now)], fieldBoundary: [
+            CLLocationCoordinate2D(latitude: 33.457469, longitude: -112.514054),
+            CLLocationCoordinate2D(latitude: 33.451068, longitude: -112.514352),
+            CLLocationCoordinate2D(latitude: 33.450843, longitude: -112.524450),
+            CLLocationCoordinate2D(latitude: 33.453947, longitude: -112.526418),
+        ])
+    ]
+}
 
 struct MapSearchView: View {
     @State private var dragOffset: CGFloat = 0
@@ -15,11 +25,13 @@ struct MapSearchView: View {
     @State private var dynamicHeight: CGFloat = 60
     @State private var searchText: String = ""
     @FocusState private var isFocused: Bool
+    @State private var selectedField: Field? = nil
     
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                Map()
+                MapViewContainer(selectedField: $selectedField, cropFields: SampleFields.data)
+                    .edgesIgnoringSafeArea(.all)
             }
             .overlay(alignment: .bottom) {
                 UnevenRoundedRectangle(topLeadingRadius: 20, topTrailingRadius: 20)

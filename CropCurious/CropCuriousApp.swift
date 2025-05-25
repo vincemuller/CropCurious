@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct CropCuriousApp: App {
+    
+    @StateObject var viewModel = ViewModel()
+    
     var body: some Scene {
         WindowGroup {
             MapSearchView()
+                .environmentObject(viewModel)
         }
     }
 }

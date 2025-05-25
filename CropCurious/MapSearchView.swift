@@ -8,32 +8,26 @@
 import SwiftUI
 import MapKit
 
-struct SampleFields {
-    static let data: [Field] = [
-        Field(acreSize: 10, farm: Farm(name: "Clarkson Farm", location: "Buckeye, Arizona"), crops: [Crop(name: "Corn", datePlanted: Date.now, estimatedHarvestDate: Date.now)], fieldBoundary: [
-            CLLocationCoordinate2D(latitude: 33.457469, longitude: -112.514054),
-            CLLocationCoordinate2D(latitude: 33.451068, longitude: -112.514352),
-            CLLocationCoordinate2D(latitude: 33.450843, longitude: -112.524450),
-            CLLocationCoordinate2D(latitude: 33.453947, longitude: -112.526418),
-        ])
-    ]
-}
 
 struct MapSearchView: View {
+    
+    @EnvironmentObject var viewModel: ViewModel
+    
     @State private var dragOffset: CGFloat = 0
     @State private var pastSheetHeight: CGFloat = 60
     @State private var dynamicHeight: CGFloat = 60
     @State private var searchText: String = ""
     @FocusState private var isFocused: Bool
-    @State private var selectedField: Field? = nil
     
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                MapViewContainer(selectedField: $selectedField, cropFields: SampleFields.data)
+                MapViewContainer(cropFields: viewModel.sampleFields)
                     .edgesIgnoringSafeArea(.all)
             }
             .overlay(alignment: .bottom) {
+                viewModel.cropDetailSheetPresenting ||
+                viewModel.selectedField != nil ? nil :
                 UnevenRoundedRectangle(topLeadingRadius: 20, topTrailingRadius: 20)
                     .fill(Color(UIColor.systemBackground))
                     .ignoresSafeArea()
@@ -79,6 +73,11 @@ struct MapSearchView: View {
                             })
                     )
             }
+            .overlay(alignment: .bottom, content: {
+                !viewModel.cropDetailSheetPresenting &&
+                viewModel.selectedField != nil ?
+                SelectedFieldCellView() : nil
+            })
             .overlay(alignment: .top) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 50)
@@ -102,6 +101,9 @@ struct MapSearchView: View {
                 }
                 .padding(.horizontal, 30)
             }
+            .sheet(isPresented: $viewModel.cropDetailSheetPresenting) {
+                Text(viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.type.label ?? "")
+            }
         }
     }
 }
@@ -109,4 +111,5 @@ struct MapSearchView: View {
 
 #Preview {
     MapSearchView()
+        .environmentObject(ViewModel())
 }

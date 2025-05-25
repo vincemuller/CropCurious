@@ -134,8 +134,11 @@ struct MapViewContainer: UIViewRepresentable {
                 generator.impactOccurred()
 
                 // Always show bottom sheet
-                parent.viewModel.selectedField = polygon.title
-//                parent.viewModel.cropDetailSheetPresenting = true
+                withAnimation(.spring) {
+                    parent.viewModel.selectedField = polygon.title
+//                    parent.viewModel.cropDetailSheetPresenting = true
+                }
+
 
                 // Only update visuals if selection changed
                 if selectedPolygonTitle != polygon.title {

@@ -12,10 +12,10 @@ class ViewModel: ObservableObject {
     
     // MARK: - Published Properties
     
-    @Published var cropDetailSheetPresenting: Bool = false
     @Published var selectedField: String? = nil
-    var sampleFields = SampleFields.data
+    @Published var dynamicOffset: CGFloat = 200
     
+    var sampleFields = SampleFields.data
     
     // MARK: - Init
     

@@ -16,35 +16,43 @@ struct SelectedFieldCellView: View {
         let farm = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.farm.name ?? ""
         let plantedDate = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.datePlanted ?? Date.now
         let harvestDate = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.estimatedHarvestDate ?? Date.now
+        let thumbnail = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.type.thumbnail ?? Image("corn")
         ZStack {
             RoundedRectangle(cornerRadius: 20)
+                .fill(Color(UIColor.systemBackground))
             HStack {
-                UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
-                    .fill(.red)
-                    .frame(width: 100)
+                thumbnail
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .mask {
+                        UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
+                    }
                 VStack (alignment: .leading) {
                     Text(crop)
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(Color(UIColor.label))
+                        .padding(.top)
                     Text(farm)
                         .font(.system(size: 14))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(Color(UIColor.label))
                         .padding(.bottom)
                     Text("Planted: \(plantedDate.formatted(.dateTime.month().day().year()))")
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color.white)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color(UIColor.label))
                     Text("Harvest Date: \(harvestDate.formatted(.dateTime.month().day().year()))")
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color.white)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color(UIColor.label))
+                        .padding(.bottom)
                 }
                 Spacer()
             }
         }
-        .frame(height: 150)
+        .frame(height: 100)
         .padding()
     }
 }
 
 #Preview {
     SelectedFieldCellView()
+        .environmentObject(ViewModel())
 }

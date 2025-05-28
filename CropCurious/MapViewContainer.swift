@@ -25,6 +25,26 @@ enum SelectedCrop: Identifiable {
             return "Wheat"
         }
     }
+    var thumbnail: Image {
+        switch self {
+        case .corn:
+            return Image("corn")
+        case .beets:
+            return Image("corn")
+        case .kale:
+            return Image("corn")
+        case .potatoes:
+            return Image("corn")
+        case .romaine:
+            return Image("corn")
+        case .spinach:
+            return Image("corn")
+        case .strawberries:
+            return Image("corn")
+        case .wheat:
+            return Image("corn")
+        }
+    }
 }
 
 struct MapViewContainer: UIViewRepresentable {
@@ -134,9 +154,9 @@ struct MapViewContainer: UIViewRepresentable {
                 generator.impactOccurred()
 
                 // Always show bottom sheet
+                parent.viewModel.selectedField = polygon.title
                 withAnimation(.spring) {
-                    parent.viewModel.selectedField = polygon.title
-//                    parent.viewModel.cropDetailSheetPresenting = true
+                    parent.viewModel.dynamicOffset = 0
                 }
 
 
@@ -147,9 +167,10 @@ struct MapViewContainer: UIViewRepresentable {
             } else {
                 // Deselect and hide
                 if selectedPolygonTitle != nil {
-                    updateSelection(on: mapView, selected: nil)
-                    parent.viewModel.selectedField = nil
-                    parent.viewModel.cropDetailSheetPresenting = false
+                    withAnimation {
+                        parent.viewModel.dynamicOffset = 200
+                        self.updateSelection(on: mapView, selected: nil)
+                    }
                 }
             }
         }

@@ -30,19 +30,19 @@ enum SelectedCrop: Identifiable {
         case .corn:
             return Image("corn")
         case .beets:
-            return Image("corn")
+            return Image("beets")
         case .kale:
-            return Image("corn")
+            return Image("kale")
         case .potatoes:
-            return Image("corn")
+            return Image("potatoes")
         case .romaine:
-            return Image("corn")
+            return Image("romaine")
         case .spinach:
-            return Image("corn")
+            return Image("spinach")
         case .strawberries:
-            return Image("corn")
+            return Image("strawberries")
         case .wheat:
-            return Image("corn")
+            return Image("wheat")
         }
     }
 }
@@ -63,12 +63,8 @@ struct MapViewContainer: UIViewRepresentable {
         mapView.showsUserLocation = true
         mapView.userTrackingMode = .none
 
-        // 🌍 Set initial region — center on the sample polygon
-        let center = CLLocationCoordinate2D(latitude: 33.454300, longitude: -112.519400)
-        let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
-        let region = MKCoordinateRegion(center: center, span: span)
-        mapView.setRegion(region, animated: false)
-        
+        context.coordinator.mapView = mapView
+
         let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
         mapView.addGestureRecognizer(tapGesture)
 
@@ -77,24 +73,36 @@ struct MapViewContainer: UIViewRepresentable {
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
         uiView.removeOverlays(uiView.overlays)
+        uiView.removeAnnotations(uiView.annotations)
 
         for field in cropFields {
             let polygon = MKPolygon(coordinates: field.fieldBoundary, count: field.fieldBoundary.count)
             polygon.title = field.id.description
             uiView.addOverlay(polygon)
+            
+            // Add custom placemark
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = field.placemarkCoor
+            annotation.title = field.crops.first?.type.label ?? ""
+            uiView.addAnnotation(annotation)
         }
     }
 
-    class Coordinator: NSObject, MKMapViewDelegate {
+    class Coordinator: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {
         var parent: MapViewContainer
         var polygons: [MKPolygon] = []
         var rendererCache: [MKPolygon: MKPolygonRenderer] = [:]
-        var selectedPolygonTitle: String?
+        var mapView: MKMapView?
+        let locationManager = CLLocationManager()
 
         init(_ parent: MapViewContainer) {
             self.parent = parent
+            super.init()
+            locationManager.delegate = self
+            locationManager.requestWhenInUseAuthorization()
+            locationManager.startUpdatingLocation()
         }
-
+        
         // MARK: - MKMapViewDelegate
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             guard let polygon = overlay as? MKPolygon else {
@@ -117,7 +125,7 @@ struct MapViewContainer: UIViewRepresentable {
             renderer.lineDashPattern = [3]
 
             // Fill color based on selection
-            if polygon.title == selectedPolygonTitle {
+            if polygon.title == parent.viewModel.selectedPolygonTitle {
                 renderer.fillColor = UIColor.systemGreen.withAlphaComponent(0.5)
             } else {
                 renderer.fillColor = UIColor.clear
@@ -125,6 +133,46 @@ struct MapViewContainer: UIViewRepresentable {
 
             rendererCache[polygon] = renderer
             return renderer
+        }
+        
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            if annotation is MKUserLocation {
+                return nil
+            }
+
+            let identifier = "MarkerAnnotation"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+
+            annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            annotationView?.canShowCallout = true
+            annotationView?.markerTintColor = .systemGreen.withAlphaComponent(0.7)
+            annotationView?.glyphText = {
+                switch annotation.title ?? "" {
+                case "Corn": return "🌽"
+                case "Potatoes": return "🥔"
+                case "Kale", "Romaine", "Spinach": return "🥬"
+                case "Strawberries": return "🍓"
+                case "Wheat": return "🌾"
+                default: return "🌱"
+                }
+            }()
+            annotationView?.titleVisibility = .adaptive
+            annotationView?.subtitleVisibility = .adaptive
+
+            return annotationView
+        }
+
+        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+            guard let mapView = mapView else { return }
+            guard let location = locations.first else { return }
+
+            let center = location.coordinate
+            let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+            let region = MKCoordinateRegion(center: center, span: span)
+            mapView.setRegion(region, animated: true)
+
+            // Stop updating location after setting initial view
+            locationManager.stopUpdatingLocation()
         }
 
         // MARK: - Tap Handler
@@ -163,12 +211,12 @@ struct MapViewContainer: UIViewRepresentable {
 
 
                 // Only update visuals if selection changed
-                if selectedPolygonTitle != polygon.title {
+                if parent.viewModel.selectedPolygonTitle != polygon.title {
                     updateSelection(on: mapView, selected: polygon)
                 }
             } else {
                 // Deselect and hide
-                if selectedPolygonTitle != nil {
+                if parent.viewModel.selectedPolygonTitle != nil {
                     withAnimation {
                         parent.viewModel.dynamicOffset = 200
                         parent.viewModel.searchDynamicOffset = 700
@@ -181,7 +229,7 @@ struct MapViewContainer: UIViewRepresentable {
         // MARK: - Selection Update
         private func updateSelection(on mapView: MKMapView, selected newSelection: MKPolygon?) {
             // Remove previous if any
-            if let currentTitle = selectedPolygonTitle,
+            if let currentTitle = parent.viewModel.selectedPolygonTitle,
                let previous = polygons.first(where: { $0.title == currentTitle }) {
                 mapView.removeOverlay(previous)
                 rendererCache[previous] = nil
@@ -191,11 +239,11 @@ struct MapViewContainer: UIViewRepresentable {
             // Add new if any
             if let new = newSelection {
                 mapView.removeOverlay(new)
-                selectedPolygonTitle = new.title
+                parent.viewModel.selectedPolygonTitle = new.title
                 rendererCache[new] = nil
                 mapView.addOverlay(new)
             } else {
-                selectedPolygonTitle = nil
+                parent.viewModel.selectedPolygonTitle = nil
             }
         }
     }

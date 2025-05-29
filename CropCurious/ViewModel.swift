@@ -18,6 +18,7 @@ class ViewModel: ObservableObject {
     @Published var searchDynamicOffset: CGFloat = 700
     @Published var searchText: String = ""
     @Published var searchResults: [Field] = []
+    @Published var selectedPolygonTitle: String?
     
     @Published var sampleFields = SampleFields.data
     

@@ -14,7 +14,7 @@ struct CropCuriousApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MapSearchView()
+            MapSearchScreen()
                 .environmentObject(viewModel)
         }
     }

@@ -50,6 +50,7 @@ enum SelectedCrop: Identifiable {
 struct MapViewContainer: UIViewRepresentable {
     // Optional bindings for interaction
     @EnvironmentObject var viewModel: ViewModel
+
     var cropFields: [Field]
 
     func makeCoordinator() -> Coordinator {
@@ -156,6 +157,7 @@ struct MapViewContainer: UIViewRepresentable {
                 // Always show bottom sheet
                 parent.viewModel.selectedField = polygon.title
                 withAnimation(.spring) {
+                    parent.viewModel.searchDynamicOffset = 900
                     parent.viewModel.dynamicOffset = 0
                 }
 
@@ -169,6 +171,7 @@ struct MapViewContainer: UIViewRepresentable {
                 if selectedPolygonTitle != nil {
                     withAnimation {
                         parent.viewModel.dynamicOffset = 200
+                        parent.viewModel.searchDynamicOffset = 700
                         self.updateSelection(on: mapView, selected: nil)
                     }
                 }

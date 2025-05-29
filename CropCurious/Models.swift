@@ -33,13 +33,13 @@ struct Crop: Identifiable {
 
 struct SampleFields {
     static let data: [Field] = [
-        Field(acreSize: 7, farm: Farm(name: "Clarkson Farm", location: "Buckeye, Arizona"), crops: [Crop(type: .potatoes, datePlanted: Date.now, estimatedHarvestDate: Date.now)], placemarkCoor: CLLocationCoordinate2D(latitude: 33.46107401968415, longitude: -112.51855992962584), fieldBoundary: [
+        Field(acreSize: 7, farm: Farm(name: "Stevenson Farm", location: "Buckeye, Arizona"), crops: [Crop(type: .potatoes, datePlanted: Date.now, estimatedHarvestDate: Date.now)], placemarkCoor: CLLocationCoordinate2D(latitude: 33.46107401968415, longitude: -112.51855992962584), fieldBoundary: [
             CLLocationCoordinate2D(latitude: 33.464434886242586,longitude: -112.49530481220827),
             CLLocationCoordinate2D(latitude: 33.46280120976414,longitude: -112.49530481220827),
             CLLocationCoordinate2D(latitude: 33.46280120976414,longitude: -112.49271007761436),
             CLLocationCoordinate2D(latitude: 33.464434886242586,longitude: -112.49271007761436),
         ]),
-        Field(acreSize: 3, farm: Farm(name: "Clarkson Farm", location: "Buckeye, Arizona"), crops: [Crop(type: .spinach, datePlanted: Date.now, estimatedHarvestDate: Date.now)], placemarkCoor: CLLocationCoordinate2D(latitude: 33.46107401968415, longitude: -112.51855992962584), fieldBoundary: [
+        Field(acreSize: 3, farm: Farm(name: "Stevenson Farm", location: "Buckeye, Arizona"), crops: [Crop(type: .spinach, datePlanted: Date.now, estimatedHarvestDate: Date.now)], placemarkCoor: CLLocationCoordinate2D(latitude: 33.46107401968415, longitude: -112.51855992962584), fieldBoundary: [
             CLLocationCoordinate2D(latitude: 33.464434886242586, longitude: -112.49251424858844),
             CLLocationCoordinate2D(latitude: 33.46280120976414, longitude: -112.49251424858844),
             CLLocationCoordinate2D(latitude: 33.46280120976414, longitude: -112.4880591382487),

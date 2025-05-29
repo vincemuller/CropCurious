@@ -22,7 +22,8 @@ struct SearchResultCellView: View {
             HStack {
                 thumbnail
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 100)
                     .mask {
                         UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
                     }

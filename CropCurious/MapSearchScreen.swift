@@ -99,12 +99,6 @@ struct MapSearchScreen: View {
                                 .focused($focused)
                                 .onSubmit {
                                     viewModel.fieldSearch()
-                                    withAnimation {
-                                        viewModel.dynamicOffset = 200
-                                        viewModel.searchDynamicOffset = 700
-                                        viewModel.selectedPolygonTitle = nil
-                                        viewModel.selectedField = nil
-                                    }
                                 }
                         }
                         .padding()

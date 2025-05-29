@@ -135,6 +135,16 @@ struct MapViewContainer: UIViewRepresentable {
             return renderer
         }
         
+        func invalidateRenderers() {
+            guard let mapView = mapView else { return }
+
+            rendererCache.removeAll()
+            let overlays = mapView.overlays
+            mapView.removeOverlays(overlays)
+            mapView.addOverlays(overlays)
+        }
+
+        
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if annotation is MKUserLocation {
                 return nil
@@ -213,6 +223,7 @@ struct MapViewContainer: UIViewRepresentable {
                 // Only update visuals if selection changed
                 if parent.viewModel.selectedPolygonTitle != polygon.title {
                     updateSelection(on: mapView, selected: polygon)
+                    invalidateRenderers()
                 }
             } else {
                 // Deselect and hide
@@ -222,6 +233,7 @@ struct MapViewContainer: UIViewRepresentable {
                         parent.viewModel.searchDynamicOffset = 700
                         self.updateSelection(on: mapView, selected: nil)
                     }
+                    invalidateRenderers()
                 }
             }
         }

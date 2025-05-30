@@ -2,50 +2,6 @@ import SwiftUI
 import MapKit
 
 
-enum SelectedCrop: Identifiable {
-    case corn, beets, kale, potatoes, romaine, spinach, strawberries, wheat
-    var id: Self { self }
-    var label: String {
-        switch self {
-        case .corn:
-            return "Corn"
-        case .beets:
-            return "Beets"
-        case .kale:
-            return "Kale"
-        case .potatoes:
-            return "Potatoes"
-        case .romaine:
-            return "Romaine"
-        case .spinach:
-            return "Spinach"
-        case .strawberries:
-            return "Strawberries"
-        case .wheat:
-            return "Wheat"
-        }
-    }
-    var thumbnail: Image {
-        switch self {
-        case .corn:
-            return Image("corn")
-        case .beets:
-            return Image("beets")
-        case .kale:
-            return Image("kale")
-        case .potatoes:
-            return Image("potatoes")
-        case .romaine:
-            return Image("romaine")
-        case .spinach:
-            return Image("spinach")
-        case .strawberries:
-            return Image("strawberries")
-        case .wheat:
-            return Image("wheat")
-        }
-    }
-}
 
 struct MapViewContainer: UIViewRepresentable {
     // Optional bindings for interaction
@@ -175,6 +131,9 @@ struct MapViewContainer: UIViewRepresentable {
         func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
             guard let mapView = mapView else { return }
             guard let location = locations.first else { return }
+            
+            parent.viewModel.userLocation = location
+            parent.viewModel.fieldSearch()
 
             let center = location.coordinate
             let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)

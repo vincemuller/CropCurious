@@ -14,13 +14,11 @@ struct SearchResultCellView: View {
     
     var body: some View {
         
-        let thumbnail = field.crops.first?.type.thumbnail ?? Image("corn")
-        
         ZStack {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(UIColor.secondarySystemBackground))
             HStack {
-                thumbnail
+                Image(field.crops.first?.type.label.lowercased() ?? "")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 100)

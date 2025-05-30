@@ -25,8 +25,7 @@ struct MapSearchScreen: View {
                 .overlay(alignment: .bottom, content: {
                     NavigationLink(destination:
                                     FieldDetailsScreen(field: viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField}) ?? Field(acreSize: 0.0, farm: Farm(name: "", location: ""), crops: [], placemarkCoor: CLLocationCoordinate2D(), fieldBoundary: []))
-                        .navigationTransition(.zoom(sourceID: viewModel.selectedField, in: namespace))
-                        .toolbarVisibility(.hidden, for: .navigationBar))
+                        .navigationTransition(.zoom(sourceID: viewModel.selectedField, in: namespace)))
                     {
                         SelectedFieldCellView()
                             .matchedTransitionSource(id: viewModel.selectedField, in: namespace)
@@ -78,7 +77,7 @@ struct MapSearchScreen: View {
                                     withAnimation {
                                         focused = false
                                         viewModel.searchText = ""
-                                        viewModel.searchResults = viewModel.sampleFields
+                                        viewModel.fieldSearch()
                                         if (viewModel.dynamicOffset == 0) {
                                             viewModel.searchDynamicOffset = 900
                                         } else {
@@ -109,7 +108,7 @@ struct MapSearchScreen: View {
                     guard viewModel.searchText.isEmpty else {
                         return
                     }
-                    viewModel.searchResults = viewModel.sampleFields
+                    viewModel.fieldSearch()
                 })
             }
         }

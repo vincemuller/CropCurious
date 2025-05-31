@@ -22,6 +22,23 @@ struct MapSearchScreen: View {
                     MapViewContainer(cropFields: viewModel.searchResults)
                         .edgesIgnoringSafeArea(.all)
                 }
+                .overlay(alignment: .bottomTrailing) {
+                    if viewModel.searchDynamicOffset != 0 {
+                        Button {
+                            viewModel.recenterUserLocation.toggle()
+                        } label: {
+                            Image(systemName: "location")
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(UIColor.label))
+                                .padding(10)
+                                .background(Color(UIColor.systemBackground))
+                                .clipShape(Circle())
+                                .shadow(radius: 4)
+                        }
+                        .padding(.trailing, 20)
+                        .padding(.bottom, 100)
+                    }
+                }
                 .overlay(alignment: .bottom, content: {
                     SelectedFieldCellView()
                         .offset(y: viewModel.dynamicOffset)
@@ -67,22 +84,8 @@ struct MapSearchScreen: View {
                             .shadow(color: .black.opacity(viewModel.searchDynamicOffset != 0 ? 0.15 : 0.0), radius: 2, x: 0, y: 3)
                         ZStack {
                             HStack {
-                                Button {
-                                    withAnimation {
-                                        focused = false
-                                        viewModel.searchText = ""
-                                        viewModel.fieldSearch()
-                                        if (viewModel.dynamicOffset == 0) {
-                                            viewModel.searchDynamicOffset = 900
-                                        } else {
-                                            viewModel.searchDynamicOffset = 700
-                                        }
-                                    }
-                                } label: {
-                                    Image(systemName: focused || !viewModel.searchText.isEmpty ? "arrow.left" : "magnifyingglass")
-                                        .foregroundStyle(Color(UIColor.secondaryLabel))
-                                }
-                                .disabled(focused || !viewModel.searchText.isEmpty ? false : true)
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundStyle(Color(UIColor.secondaryLabel))
                                 !viewModel.searchText.isEmpty ? nil :
                                 SearchCarouselView()
                                 Spacer()
@@ -97,7 +100,9 @@ struct MapSearchScreen: View {
                                 viewModel.searchText.isEmpty ? nil :
                                 Button {
                                     viewModel.searchText = ""
-                                    viewModel.fieldSearch()
+                                    viewModel.searchResults = viewModel.sampleFields
+                                    viewModel.selectedField = nil
+                                    viewModel.selectedPolygonTitle = nil
                                 } label: {
                                     Image(systemName: "xmark")
                                         .foregroundStyle(Color.red)
@@ -128,12 +133,6 @@ struct MapSearchScreen: View {
                                 .fill(Color(UIColor.systemGreen))
                         }
                     }
-                })
-                .onAppear(perform: {
-                    guard viewModel.searchText.isEmpty else {
-                        return
-                    }
-                    viewModel.fieldSearch()
                 })
             }
         }

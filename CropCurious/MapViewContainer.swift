@@ -47,6 +47,22 @@ struct MapViewContainer: UIViewRepresentable {
                 uiView.addAnnotation(annotation)
             }
         }
+        
+        if viewModel.recenterUserLocation,
+           let location = viewModel.userLocation {
+            let center = location.coordinate
+            let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+            let region = MKCoordinateRegion(center: center, span: span)
+            uiView.setRegion(region, animated: true)
+
+            // Reset the trigger flag
+            DispatchQueue.main.async {
+                self.viewModel.recenterUserLocation = false
+            }
+        }
+        
+        print("Overlay count: \(uiView.overlays.count), Fields: \(cropFields.count)")
+
     }
 
     class Coordinator: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {

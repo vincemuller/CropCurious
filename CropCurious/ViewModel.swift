@@ -15,6 +15,7 @@ class ViewModel: ObservableObject {
     // MARK: - Published Properties
     
     @Published var userLocation: CLLocation? = nil
+    @Published var recenterUserLocation: Bool = false
     @Published var selectedField: String? = nil
     @Published var dynamicOffset: CGFloat = 200
     @Published var searchDynamicOffset: CGFloat = 700
@@ -27,7 +28,9 @@ class ViewModel: ObservableObject {
     
     // MARK: - Init
     
-    init() {}
+    init() {
+        fieldSearch()
+    }
 
     func fieldSearch() {
         guard !searchText.isEmpty else {
@@ -40,12 +43,15 @@ class ViewModel: ObservableObject {
         
         searchResults = searchResults.filter({$0.distance(to: userLocation ?? CLLocation(latitude: CLLocationDegrees(0.0), longitude: CLLocationDegrees(0.0))) <= distanceThreshold})
         
-        if (searchResults.contains(where: {$0.id.description != selectedField})) {
-            withAnimation {
-                selectedField = nil
-                dynamicOffset = 200
+        withAnimation {
+            selectedPolygonTitle = nil
+            selectedField = nil
+            dynamicOffset = 200
+            if searchDynamicOffset == 900 {
+                searchDynamicOffset = 700
             }
         }
+        
     }
     
     func getSelectedField() -> Crop {

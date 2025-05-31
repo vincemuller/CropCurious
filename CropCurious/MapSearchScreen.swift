@@ -23,14 +23,8 @@ struct MapSearchScreen: View {
                         .edgesIgnoringSafeArea(.all)
                 }
                 .overlay(alignment: .bottom, content: {
-                    NavigationLink(destination:
-                                    FieldDetailsScreen(field: viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField}) ?? Field(acreSize: 0.0, farm: Farm(name: "", location: ""), crops: [], placemarkCoor: CLLocationCoordinate2D(), fieldBoundary: []))
-                        .navigationTransition(.zoom(sourceID: viewModel.selectedField, in: namespace)))
-                    {
-                        SelectedFieldCellView()
-                            .matchedTransitionSource(id: viewModel.selectedField, in: namespace)
-                    }
-                    .offset(y: viewModel.dynamicOffset)
+                    SelectedFieldCellView()
+                        .offset(y: viewModel.dynamicOffset)
                 })
                 .overlay(alignment: .bottom) {
                     ZStack (alignment: .top) {
@@ -49,8 +43,7 @@ struct MapSearchScreen: View {
                             }
                             .padding(.top)
                             viewModel.searchDynamicOffset == 0 ? nil :
-                            Text("\(viewModel.searchResults.count) fields")
-                                .font(.system(size: 16, weight: .semibold))
+                            CCTextView(text: "\(viewModel.searchResults.count) fields", size: 16, weight: .semibold)
                                 .padding()
                             ScrollView {
                                 VStack {
@@ -59,6 +52,7 @@ struct MapSearchScreen: View {
                                     }
                                 }
                             }
+                            .frame(height: 700)
                             .offset(y: 100)
                         }
                     }
@@ -93,17 +87,48 @@ struct MapSearchScreen: View {
                                 SearchCarouselView()
                                 Spacer()
                             }
-                            TextField("", text: $viewModel.searchText)
-                                .offset(x: 28)
-                                .focused($focused)
-                                .onSubmit {
+                            HStack {
+                                TextField("", text: $viewModel.searchText)
+                                    .offset(x: 28)
+                                    .focused($focused)
+                                    .onSubmit {
+                                        viewModel.fieldSearch()
+                                    }
+                                viewModel.searchText.isEmpty ? nil :
+                                Button {
+                                    viewModel.searchText = ""
                                     viewModel.fieldSearch()
+                                } label: {
+                                    Image(systemName: "xmark")
+                                        .foregroundStyle(Color.red)
                                 }
+
+                            }
                         }
                         .padding()
                     }
                     .padding(.horizontal, 30)
                 }
+                .overlay(alignment: .bottom, content: {
+                    viewModel.searchDynamicOffset != 0 ? nil :
+                    Button {
+                        withAnimation {
+                            viewModel.searchDynamicOffset = 700
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "map")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(Color(UIColor.black))
+                            CCTextView(text: "Map", size: 18, weight: .semibold, color: Color.black)
+                        }
+                        .padding(15)
+                        .background {
+                            RoundedRectangle(cornerRadius: 40)
+                                .fill(Color(UIColor.systemGreen))
+                        }
+                    }
+                })
                 .onAppear(perform: {
                     guard viewModel.searchText.isEmpty else {
                         return

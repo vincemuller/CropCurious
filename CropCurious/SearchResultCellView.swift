@@ -8,45 +8,56 @@
 import SwiftUI
 import MapKit
 
+
 struct SearchResultCellView: View {
     
     var field: Field
+    @Namespace var namespace
     
     var body: some View {
-        
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(UIColor.secondarySystemBackground))
-            HStack {
-                Image(field.crops.first?.type.label.lowercased() ?? "")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100)
-                    .mask {
-                        UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
+        NavigationLink {
+            
+            FieldDetailsScreen(field: field)
+                .navigationBarBackButtonHidden(true)
+                .navigationTransition(.zoom(sourceID: field.id, in: namespace))
+            
+        } label: {
+            
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(UIColor.secondarySystemBackground))
+                HStack {
+                    Image(field.crops.first?.type.label.lowercased() ?? "")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 100)
+                        .mask {
+                            UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
+                        }
+                        .matchedTransitionSource(id: field.id, in: namespace)
+                    VStack (alignment: .leading) {
+                        Text(field.crops.first?.type.label ?? "")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(Color(UIColor.label))
+                            .padding(.top, 5)
+                        Text(field.farm.name)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color(UIColor.label))
+                        Text(field.farm.location)
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(UIColor.label))
+                            .padding(.bottom)
+                        Text("Harvest Date: \(field.crops.first?.estimatedHarvestDate.formatted(.dateTime.month().day().year()) ?? "")")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(UIColor.label))
+                            .padding(.bottom, 10)
                     }
-                VStack (alignment: .leading) {
-                    Text(field.crops.first?.type.label ?? "")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(Color(UIColor.label))
-                        .padding(.top)
-                    Text(field.farm.name)
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color(UIColor.label))
-                        .padding(.bottom)
-                    Text("Planted: \(field.crops.first?.datePlanted.formatted(.dateTime.month().day().year()) ?? "")")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color(UIColor.label))
-                    Text("Harvest Date: \(field.crops.first?.estimatedHarvestDate.formatted(.dateTime.month().day().year()) ?? "")")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color(UIColor.label))
-                        .padding(.bottom)
+                    Spacer()
                 }
-                Spacer()
             }
+            .frame(height: 80)
+            .padding()
         }
-        .frame(height: 100)
-        .padding()
     }
 }
 

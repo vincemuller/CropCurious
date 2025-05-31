@@ -28,23 +28,29 @@ struct MapViewContainer: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        uiView.removeOverlays(uiView.overlays)
-        uiView.removeAnnotations(uiView.annotations)
+        let newFieldIDs = Set(cropFields.map { $0.id })
 
-        for field in cropFields {
-            let polygon = MKPolygon(coordinates: field.fieldBoundary, count: field.fieldBoundary.count)
-            polygon.title = field.id.description
-            uiView.addOverlay(polygon)
-            
-            // Add custom placemark
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = field.placemarkCoor
-            annotation.title = field.crops.first?.type.label ?? ""
-            uiView.addAnnotation(annotation)
+        if newFieldIDs != context.coordinator.currentFieldIDs {
+            context.coordinator.currentFieldIDs = newFieldIDs
+
+            uiView.removeOverlays(uiView.overlays)
+            uiView.removeAnnotations(uiView.annotations)
+
+            for field in cropFields {
+                let polygon = MKPolygon(coordinates: field.fieldBoundary, count: field.fieldBoundary.count)
+                polygon.title = field.id.description
+                uiView.addOverlay(polygon)
+
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = field.placemarkCoor
+                annotation.title = field.crops.first?.type.label ?? ""
+                uiView.addAnnotation(annotation)
+            }
         }
     }
 
     class Coordinator: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {
+        var currentFieldIDs: Set<UUID> = []
         var parent: MapViewContainer
         var polygons: [MKPolygon] = []
         var rendererCache: [MKPolygon: MKPolygonRenderer] = [:]

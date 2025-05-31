@@ -48,5 +48,9 @@ class ViewModel: ObservableObject {
         }
     }
     
+    func getSelectedField() -> Crop {
+        return sampleFields.first(where: {$0.id.description == selectedField})?.crops.first ?? Crop(type: .corn, datePlanted: Date(), estimatedHarvestDate: Date())
+    }
+    
     
 }

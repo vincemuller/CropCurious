@@ -27,36 +27,22 @@ struct FieldDetailsScreen: View {
             ScrollView {
                 VStack {
                     VStack {
-                        Text(selectedCrop.type.label)
-                            .font(.system(size: 40, weight: .semibold))
-                            .foregroundStyle(Color(UIColor.label))
+                        CCTextView(text: selectedCrop.type.label, size: 40, weight: .semibold)
                             .frame(width: UIScreen.main.bounds.width, alignment: .leading)
                             .overlay(alignment: .trailing) {
                                 selectedCrop.id != field.crops.first?.id ? nil :
-                                Text("✅ Current")
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(Color(UIColor.systemGreen))
+                                CCTextView(text: "✅ Current", size: 12, color: Color(UIColor.systemGreen))
                                     .offset(x: -40)
                             }
-                        Text(field.farm.name)
-                            .font(.system(size: 20))
-                            .foregroundStyle(Color(UIColor.label))
+                        CCTextView(text: field.farm.name, size: 20)
                             .frame(width: UIScreen.main.bounds.width, alignment: .leading)
                             .padding(.bottom)
                         HStack (spacing: 0) {
-                            Text("Planted: ")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color(UIColor.label).opacity(0.8))
-                            Text(selectedCrop.datePlanted.formatted(.dateTime.month().day().year()))
-                                .font(.system(size: 14))
-                                .foregroundStyle(Color(UIColor.label).opacity(0.8))
+                            CCTextView(text: "Planted: ", size: 14, weight: .semibold, color: Color(UIColor.label).opacity(0.8))
+                            CCTextView(text: selectedCrop.datePlanted.formatted(.dateTime.month().day().year()), size: 14, color: Color(UIColor.label).opacity(0.8))
                                 .padding(.trailing, 20)
-                            Text("Harvest: ")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color(UIColor.label).opacity(0.8))
-                            Text(selectedCrop.estimatedHarvestDate.formatted(.dateTime.month().day().year()))
-                                .font(.system(size: 14))
-                                .foregroundStyle(Color(UIColor.label).opacity(0.8))
+                            CCTextView(text: "Harvested: ", size: 14, weight: .semibold, color: Color(UIColor.label).opacity(0.8))
+                            CCTextView(text: selectedCrop.estimatedHarvestDate.formatted(.dateTime.month().day().year()), size: 14, color: Color(UIColor.label).opacity(0.8))
                             Spacer()
                         }
                     }
@@ -67,9 +53,7 @@ struct FieldDetailsScreen: View {
                         .fill(Color(UIColor.label).opacity(0.3))
                         .frame(height: 1)
                         .padding()
-                    Text("Crop History")
-                        .font(.system(size: 25, weight: .semibold))
-                        .foregroundStyle(Color(UIColor.label))
+                    CCTextView(text: "Crop History", size: 25, weight: .semibold)
                         .frame(width: UIScreen.main.bounds.width, alignment: .leading)
                         .padding(.leading, 40)
                         .padding(.bottom)
@@ -82,17 +66,11 @@ struct FieldDetailsScreen: View {
                                 .mask {
                                     RoundedRectangle(cornerRadius: 15)
                                 }
-                            VStack (alignment: .leading) {
-                                Text(crop.type.label)
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundStyle(Color(crop.id != selectedCrop.id ? UIColor.label : UIColor.systemGreen))
+                            VStack (alignment: .leading, spacing: 5) {
+                                CCTextView(text: crop.type.label, size: 16, weight: .semibold, color: Color(crop.id != selectedCrop.id ? UIColor.label : UIColor.systemGreen))
                                 HStack (spacing: 0) {
-                                    Text("Harvest: ")
-                                        .font(.system(size: 14, weight: .semibold))
-                                        .foregroundStyle(Color(UIColor.label).opacity(0.8))
-                                    Text(crop.datePlanted.formatted(.dateTime.month().day().year()))
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(Color(UIColor.label).opacity(0.8))
+                                    CCTextView(text: "Harvest: ", size: 14, weight: .semibold, color: Color(UIColor.label).opacity(0.8))
+                                    CCTextView(text: crop.estimatedHarvestDate.formatted(.dateTime.month().day().year()), size: 14, color: Color(UIColor.label).opacity(0.8))
                                 }
                             }
                             Spacer()
@@ -151,7 +129,7 @@ struct FieldDetailsScreen: View {
                                 .foregroundColor(Color(UIColor.label).opacity(0.8))
                                 
                         }
-                        .frame(width: 40, height: 40)
+                        .frame(width: 30, height: 30)
                 }
             }
         }

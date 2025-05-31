@@ -6,46 +6,48 @@
 //
 
 import SwiftUI
+import MapKit
+
 
 struct SelectedFieldCellView: View {
     
     @EnvironmentObject var viewModel: ViewModel
+    @Namespace var namespace2
     
     var body: some View {
-        let crop = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.type.label ?? ""
+        let crop = viewModel.getSelectedField()
         let farm = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.farm.name ?? ""
-        let plantedDate = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.datePlanted ?? Date.now
-        let harvestDate = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.estimatedHarvestDate ?? Date.now
-        let thumbnail = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.crops.first?.type.thumbnail ?? Image("corn")
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(UIColor.systemBackground))
-            HStack {
-                thumbnail
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100)
-                    .mask {
-                        UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
+        
+        NavigationLink {
+            
+            FieldDetailsScreen(field: viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField}) ?? Field(acreSize: 0.0, farm: Farm(name: "", location: ""), crops: [], placemarkCoor: CLLocationCoordinate2D(), fieldBoundary: []))
+                .navigationBarBackButtonHidden(true)
+                .navigationTransition(.zoom(sourceID: viewModel.selectedField, in: namespace2))
+            
+        } label: {
+            
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(UIColor.systemBackground))
+                HStack {
+                    crop.type.thumbnail
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 100)
+                        .mask {
+                            UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
+                        }
+                    VStack (alignment: .leading) {
+                        CCTextView(text: crop.type.label, size: 20, weight: .semibold)
+                            .padding(.top)
+                        CCTextView(text: farm, size: 14)
+                            .padding(.bottom)
+                        CCTextView(text: "Planted: \(crop.datePlanted.formatted(.dateTime.month().day().year()))", size: 12)
+                        CCTextView(text: "Harvest: \(crop.estimatedHarvestDate.formatted(.dateTime.month().day().year()))", size: 12)
+                            .padding(.bottom)
                     }
-                VStack (alignment: .leading) {
-                    Text(crop)
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(Color(UIColor.label))
-                        .padding(.top)
-                    Text(farm)
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color(UIColor.label))
-                        .padding(.bottom)
-                    Text("Planted: \(plantedDate.formatted(.dateTime.month().day().year()))")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color(UIColor.label))
-                    Text("Harvest Date: \(harvestDate.formatted(.dateTime.month().day().year()))")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color(UIColor.label))
-                        .padding(.bottom)
+                    Spacer()
                 }
-                Spacer()
             }
         }
         .frame(height: 100)

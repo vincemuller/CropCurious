@@ -64,6 +64,14 @@ class ViewModel: ObservableObject {
 
     }
     
+    func clearSearch() {
+        searchText = ""
+        searchResults = sampleFields
+        selectedField = nil
+        selectedPolygonTitle = nil
+        dynamicOffset = 200
+    }
+    
     
     func getSelectedField() -> Crop {
         return sampleFields.first(where: {$0.id.description == selectedField})?.crops.first ?? Crop(type: .corn, datePlanted: Date(), estimatedHarvestDate: Date())

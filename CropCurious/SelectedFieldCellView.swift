@@ -10,7 +10,7 @@ import MapKit
 
 
 struct SelectedFieldCellView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    
     var field: Field
     @Namespace var namespace2
     
@@ -20,7 +20,7 @@ struct SelectedFieldCellView: View {
             
             FieldDetailsScreen(field: field)
                 .navigationBarBackButtonHidden(true)
-                .navigationTransition(.zoom(sourceID: viewModel.selectedField, in: namespace2))
+                .navigationTransition(.zoom(sourceID: field.id, in: namespace2))
             
         } label: {
             
@@ -28,14 +28,14 @@ struct SelectedFieldCellView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color(UIColor.systemBackground))
                 HStack {
-                    field.crops.first?.type.thumbnail
+                    Image(field.crops.first?.type.label.lowercased() ?? "")
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100)
                         .mask {
                             UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
                         }
-                        .matchedGeometryEffect(id: viewModel.selectedField, in: namespace2)
+                        .matchedTransitionSource(id: field.id, in: namespace2)
                     VStack (alignment: .leading) {
                         CCTextView(text: field.crops.first?.type.label ?? "", size: 20, weight: .semibold)
                             .padding(.top)
@@ -55,5 +55,8 @@ struct SelectedFieldCellView: View {
 }
 
 #Preview {
-    SelectedFieldCellView(field: Field(acreSize: 0.0, farm: Farm(name: "Vince Farm", location: "Buckeye, AZ"), crops: [], placemarkCoor: CLLocationCoordinate2D(latitude: 0, longitude: 0), fieldBoundary: []))
+    NavigationStack {
+        SelectedFieldCellView(field: Field(acreSize: 0.0, farm: Farm(name: "Vince Farm", location: "Buckeye, AZ"), crops: [Crop(type: .corn, datePlanted: Date(), estimatedHarvestDate: Date())], placemarkCoor: CLLocationCoordinate2D(latitude: 0, longitude: 0), fieldBoundary: []))
+            .environmentObject(ViewModel())
+    }
 }

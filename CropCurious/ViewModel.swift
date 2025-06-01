@@ -23,6 +23,7 @@ class ViewModel: ObservableObject {
     @Published var searchResults: [Field] = []
     @Published var selectedPolygonTitle: String?
     @Published var distanceThreshold: CLLocationDistance = 5000
+    @Published var searchActive: Bool = false
     
     @Published var sampleFields = SampleFields.data
     
@@ -33,26 +34,37 @@ class ViewModel: ObservableObject {
     }
 
     func fieldSearch() {
-        guard !searchText.isEmpty else {
-            
-            return searchResults = sampleFields.filter({$0.distance(to: userLocation ?? CLLocation(latitude: CLLocationDegrees(0.0), longitude: CLLocationDegrees(0.0))) <= distanceThreshold})
-            
+        
+        searchActive.toggle()
+        
+        let currentLocation = userLocation ?? CLLocation(latitude: 0, longitude: 0)
+
+        if searchText.isEmpty {
+            searchResults = sampleFields.filter {
+                $0.distance(to: currentLocation) <= distanceThreshold
+            }
+        } else {
+            searchResults = sampleFields.filter {
+                $0.farm.name.localizedCaseInsensitiveContains(searchText) ||
+                $0.crops.first?.type.label.localizedCaseInsensitiveContains(searchText) ?? false
+            }.filter {
+                $0.distance(to: currentLocation) <= distanceThreshold
+            }
         }
-        
-        searchResults = sampleFields.filter({$0.farm.name.localizedCaseInsensitiveContains(searchText) || $0.crops.first?.type.label.localizedCaseInsensitiveContains(searchText) ?? false})
-        
-        searchResults = searchResults.filter({$0.distance(to: userLocation ?? CLLocation(latitude: CLLocationDegrees(0.0), longitude: CLLocationDegrees(0.0))) <= distanceThreshold})
-        
+
+        // Reset selection and view state
         withAnimation {
             selectedPolygonTitle = nil
             selectedField = nil
             dynamicOffset = 200
-            if searchDynamicOffset == 900 {
+            if searchDynamicOffset != 0 {
                 searchDynamicOffset = 700
             }
         }
         
+        searchActive.toggle()
     }
+    
     
     func getSelectedField() -> Crop {
         return sampleFields.first(where: {$0.id.description == selectedField})?.crops.first ?? Crop(type: .corn, datePlanted: Date(), estimatedHarvestDate: Date())

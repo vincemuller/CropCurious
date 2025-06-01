@@ -10,17 +10,15 @@ import MapKit
 
 
 struct SelectedFieldCellView: View {
-    
     @EnvironmentObject var viewModel: ViewModel
+    var field: Field
     @Namespace var namespace2
     
     var body: some View {
-        let crop = viewModel.getSelectedField()
-        let farm = viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField})?.farm.name ?? ""
         
         NavigationLink {
             
-            FieldDetailsScreen(field: viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField}) ?? Field(acreSize: 0.0, farm: Farm(name: "", location: ""), crops: [], placemarkCoor: CLLocationCoordinate2D(), fieldBoundary: []))
+            FieldDetailsScreen(field: field)
                 .navigationBarBackButtonHidden(true)
                 .navigationTransition(.zoom(sourceID: viewModel.selectedField, in: namespace2))
             
@@ -30,20 +28,21 @@ struct SelectedFieldCellView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color(UIColor.systemBackground))
                 HStack {
-                    crop.type.thumbnail
+                    field.crops.first?.type.thumbnail
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100)
                         .mask {
                             UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 20)
                         }
+                        .matchedGeometryEffect(id: viewModel.selectedField, in: namespace2)
                     VStack (alignment: .leading) {
-                        CCTextView(text: crop.type.label, size: 20, weight: .semibold)
+                        CCTextView(text: field.crops.first?.type.label ?? "", size: 20, weight: .semibold)
                             .padding(.top)
-                        CCTextView(text: farm, size: 14)
+                        CCTextView(text: field.farm.name, size: 14)
                             .padding(.bottom)
-                        CCTextView(text: "Planted: \(crop.datePlanted.formatted(.dateTime.month().day().year()))", size: 12)
-                        CCTextView(text: "Harvest: \(crop.estimatedHarvestDate.formatted(.dateTime.month().day().year()))", size: 12)
+                        CCTextView(text: "Planted: \(field.crops.first?.datePlanted.formatted(.dateTime.month().day().year()) ?? "")", size: 12)
+                        CCTextView(text: "Harvest: \(field.crops.first?.estimatedHarvestDate.formatted(.dateTime.month().day().year()) ?? "")", size: 12)
                             .padding(.bottom)
                     }
                     Spacer()
@@ -56,6 +55,5 @@ struct SelectedFieldCellView: View {
 }
 
 #Preview {
-    SelectedFieldCellView()
-        .environmentObject(ViewModel())
+    SelectedFieldCellView(field: Field(acreSize: 0.0, farm: Farm(name: "Vince Farm", location: "Buckeye, AZ"), crops: [], placemarkCoor: CLLocationCoordinate2D(latitude: 0, longitude: 0), fieldBoundary: []))
 }

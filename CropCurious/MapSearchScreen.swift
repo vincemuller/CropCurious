@@ -13,7 +13,6 @@ struct MapSearchScreen: View {
     
     @EnvironmentObject var viewModel: ViewModel
     @FocusState var focused: Bool
-    @Namespace var namespace
     
     var body: some View {
         NavigationStack {
@@ -40,7 +39,7 @@ struct MapSearchScreen: View {
                     }
                 }
                 .overlay(alignment: .bottom, content: {
-                    SelectedFieldCellView()
+                    SelectedFieldCellView(field: viewModel.sampleFields.first(where: {$0.id.description == viewModel.selectedField}) ?? Field(acreSize: 0.0, farm: Farm(name: "", location: ""), crops: [], placemarkCoor: CLLocationCoordinate2D(latitude: 0, longitude: 0), fieldBoundary: []))
                         .offset(y: viewModel.dynamicOffset)
                 })
                 .overlay(alignment: .bottom) {
@@ -103,6 +102,9 @@ struct MapSearchScreen: View {
                                     viewModel.searchResults = viewModel.sampleFields
                                     viewModel.selectedField = nil
                                     viewModel.selectedPolygonTitle = nil
+                                    viewModel.dynamicOffset = 200
+                                    viewModel.searchDynamicOffset = 700
+                                    focused = false
                                 } label: {
                                     Image(systemName: "xmark")
                                         .foregroundStyle(Color.red)

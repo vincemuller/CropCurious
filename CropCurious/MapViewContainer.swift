@@ -6,7 +6,6 @@ import MapKit
 struct MapViewContainer: UIViewRepresentable {
     // Optional bindings for interaction
     @EnvironmentObject var viewModel: ViewModel
-
     var cropFields: [Field]
 
     func makeCoordinator() -> Coordinator {
@@ -28,24 +27,23 @@ struct MapViewContainer: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        
         let newFieldIDs = Set(cropFields.map { $0.id })
 
-        if newFieldIDs != context.coordinator.currentFieldIDs {
-            context.coordinator.currentFieldIDs = newFieldIDs
+        context.coordinator.currentFieldIDs = newFieldIDs
 
-            uiView.removeOverlays(uiView.overlays)
-            uiView.removeAnnotations(uiView.annotations)
+        uiView.removeOverlays(uiView.overlays)
+        uiView.removeAnnotations(uiView.annotations)
 
-            for field in cropFields {
-                let polygon = MKPolygon(coordinates: field.fieldBoundary, count: field.fieldBoundary.count)
-                polygon.title = field.id.description
-                uiView.addOverlay(polygon)
+        for field in cropFields {
+            let polygon = MKPolygon(coordinates: field.fieldBoundary, count: field.fieldBoundary.count)
+            polygon.title = field.id.description
+            uiView.addOverlay(polygon)
 
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = field.placemarkCoor
-                annotation.title = field.crops.first?.type.label ?? ""
-                uiView.addAnnotation(annotation)
-            }
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = field.placemarkCoor
+            annotation.title = field.crops.first?.type.label ?? ""
+            uiView.addAnnotation(annotation)
         }
         
         if viewModel.recenterUserLocation,

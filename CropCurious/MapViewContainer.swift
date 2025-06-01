@@ -59,6 +59,13 @@ struct MapViewContainer: UIViewRepresentable {
             }
         }
         
+        if viewModel.searchActive {
+            context.coordinator.zoomToFitFields(cropFields, in: uiView)
+            DispatchQueue.main.async {
+                self.viewModel.searchActive = false
+            }
+        }
+        
         print("Overlay count: \(uiView.overlays.count), Fields: \(cropFields.count)")
 
     }
@@ -110,6 +117,23 @@ struct MapViewContainer: UIViewRepresentable {
             rendererCache[polygon] = renderer
             return renderer
         }
+        
+        func zoomToFitFields(_ fields: [Field], in mapView: MKMapView) {
+            let coordinates = fields.flatMap { $0.fieldBoundary }
+
+            guard !coordinates.isEmpty else { return }
+
+            var zoomRect = MKMapRect.null
+            for coordinate in coordinates {
+                let point = MKMapPoint(coordinate)
+                let rect = MKMapRect(x: point.x, y: point.y, width: 0.1, height: 0.1)
+                zoomRect = zoomRect.union(rect)
+            }
+
+            mapView.setVisibleMapRect(zoomRect, edgePadding: UIEdgeInsets(top: 80, left: 50, bottom: 250, right: 50), animated: true)
+            
+        }
+
         
         func invalidateRenderers() {
             guard let mapView = mapView else { return }

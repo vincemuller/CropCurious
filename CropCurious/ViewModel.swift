@@ -61,8 +61,7 @@ class ViewModel: ObservableObject {
                 searchDynamicOffset = 700
             }
         }
-        
-        searchActive.toggle()
+
     }
     
     

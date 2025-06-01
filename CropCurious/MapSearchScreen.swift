@@ -98,14 +98,13 @@ struct MapSearchScreen: View {
                                     .onSubmit {
                                         viewModel.fieldSearch()
                                     }
-                                !focused ? nil :
+                                !focused && viewModel.searchText.isEmpty ? nil :
                                 Button {
                                     viewModel.searchText = ""
                                     viewModel.searchResults = viewModel.sampleFields
                                     viewModel.selectedField = nil
                                     viewModel.selectedPolygonTitle = nil
                                     viewModel.dynamicOffset = 200
-                                    viewModel.searchDynamicOffset = 700
                                     focused = false
                                 } label: {
                                     Image(systemName: "xmark")

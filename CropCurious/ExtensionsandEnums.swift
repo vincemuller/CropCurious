@@ -17,6 +17,12 @@ extension Field {
     }
 }
 
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
 enum SelectedCrop: Identifiable {
     case corn, beets, kale, potatoes, romaine, spinach, strawberries, wheat
     var id: Self { self }

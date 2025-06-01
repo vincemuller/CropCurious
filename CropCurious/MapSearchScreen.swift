@@ -21,6 +21,7 @@ struct MapSearchScreen: View {
                     MapViewContainer(cropFields: viewModel.searchResults)
                         .edgesIgnoringSafeArea(.all)
                 }
+                .ignoresSafeArea(.keyboard)
                 .overlay(alignment: .bottomTrailing) {
                     if viewModel.searchDynamicOffset != 0 {
                         Button {
@@ -35,7 +36,7 @@ struct MapSearchScreen: View {
                                 .shadow(radius: 4)
                         }
                         .padding(.trailing, 20)
-                        .padding(.bottom, 100)
+                        .padding(.bottom, 140)
                     }
                 }
                 .overlay(alignment: .bottom, content: {
@@ -73,6 +74,7 @@ struct MapSearchScreen: View {
                         }
                     }
                     .ignoresSafeArea()
+                    .ignoresSafeArea(.keyboard)
                     .offset(y: viewModel.searchDynamicOffset)
                 }
                 .overlay(alignment: .top) {
@@ -96,7 +98,7 @@ struct MapSearchScreen: View {
                                     .onSubmit {
                                         viewModel.fieldSearch()
                                     }
-                                viewModel.searchText.isEmpty ? nil :
+                                !focused ? nil :
                                 Button {
                                     viewModel.searchText = ""
                                     viewModel.searchResults = viewModel.sampleFields
@@ -115,6 +117,14 @@ struct MapSearchScreen: View {
                         .padding()
                     }
                     .padding(.horizontal, 30)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") {
+                                hideKeyboard()
+                            }
+                        }
+                    }
                 }
                 .overlay(alignment: .bottom, content: {
                     viewModel.searchDynamicOffset != 0 ? nil :
@@ -137,7 +147,9 @@ struct MapSearchScreen: View {
                     }
                 })
             }
+            .ignoresSafeArea(.keyboard)
         }
+        .ignoresSafeArea(.keyboard)
     }
 }
 

@@ -1,9 +1,3 @@
-//
-//  SearchCarouselView.swift
-//  CSID_Simple
-//
-//
-
 import SwiftUI
 
 struct SearchCarouselView: View {

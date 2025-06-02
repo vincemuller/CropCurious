@@ -109,7 +109,7 @@ struct MapViewContainer: UIViewRepresentable {
 
             // Fill color based on selection
             if polygon.title == parent.viewModel.selectedPolygonTitle {
-                renderer.fillColor = UIColor.systemGreen.withAlphaComponent(0.5)
+                renderer.fillColor = UIColor.systemGreen.withAlphaComponent(0.75)
             } else {
                 renderer.fillColor = UIColor.clear
             }

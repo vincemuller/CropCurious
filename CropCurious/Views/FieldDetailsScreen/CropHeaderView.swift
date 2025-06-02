@@ -29,7 +29,7 @@ struct CropHeaderView: View {
                 CCTextView(text: "Planted: ", size: 14, weight: .semibold, color: Color(UIColor.label).opacity(0.8))
                 CCTextView(text: selectedCrop.datePlanted.formatted(.dateTime.month().day().year()), size: 14, color: Color(UIColor.label).opacity(0.8))
                     .padding(.trailing, 20)
-                CCTextView(text: "Harvested: ", size: 14, weight: .semibold, color: Color(UIColor.label).opacity(0.8))
+                CCTextView(text: "Harvest: ", size: 14, weight: .semibold, color: Color(UIColor.label).opacity(0.8))
                 CCTextView(text: selectedCrop.estimatedHarvestDate.formatted(.dateTime.month().day().year()), size: 14, color: Color(UIColor.label).opacity(0.8))
                 Spacer()
             }

@@ -24,9 +24,9 @@
 
 ### 🖼 UI/UX Design and Inspiration
 
-The map-based search and interaction design in CropCurious was heavily inspired by the exceptional user experience of the AllTrails app. I admire AllTrails' seamless integration of map navigation, smooth transitions, and intuitive search interactions — and aimed to replicate that level of polish where possible.
+The map based search and interaction design in CropCurious was heavily inspired by the exceptional user experience of the AllTrails app. I admire AllTrails' seamless integration of map navigation, smooth transitions, and intuitive search interactions — and aimed to replicate that level of polish where possible.
 
-From gesture-driven bottom sheets to dynamic map overlays, this project is a personal attempt to bring AllTrails-like design quality into an agricultural field scouting context.
+From gesture driven bottom sheets to dynamic map overlays, this project is a personal attempt to bring AllTrails-like design quality into an agricultural field scouting context.
 
 
 ---
@@ -35,18 +35,23 @@ From gesture-driven bottom sheets to dynamic map overlays, this project is a per
 
 Ideas for upcoming releases:
 
-- ✅  
-- ✅  
-- ✅ 
-- ✅ 
-- ✅ 
+- ✅  Optimize rendering performance
+- ✅  Additional search filters and sorting options
+- ✅  Section for uploading new field data
+- ✅  Farm profile/details page
+- ✅  Map view tools
 
 ---
 
-### 📦 Getting Started
+## 🚀 Getting Started
 
-To run locally:
+### Requirements
+
+- Xcode 14+
+- iOS 16+
+
+### Installation
 
 ```bash
-git clone https://github.com/vincemuller/ClippNotes.git
-open ClippNotes.xcodeproj
+git clone https://github.com/vincemuller/CropCurious.git
+open CropCurious.xcodeproj
